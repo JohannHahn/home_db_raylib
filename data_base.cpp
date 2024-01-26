@@ -2,6 +2,13 @@
 #include <assert.h>
 int changes = 0;
 
+bool contains(const std::unordered_map<std::string, Result>& map, std::string key) {
+    for(std::pair<std::string, Result> pair : map) {
+	if(pair.first == key) return true;
+    }
+    return false;
+}
+
 DataBase::DataBase(const char* file)
 {
     uint32_t rc = sqlite3_open(file, &this->db);
@@ -104,7 +111,7 @@ const Result& DataBase::sql_query(const char* query, ...)
     va_start(args, query);
     vsnprintf(buf, QUERY_LIMIT, query, args);
     va_end(args);
-    if (!cache.contains(buf)) {
+    if (!contains(cache, buf)) {
 	    std::cout << "========\n";
 	    std::cout << "db query = " << buf << "\n";
 	    std::cout << "========\n";
