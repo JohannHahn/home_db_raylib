@@ -1,7 +1,6 @@
 #include "data_base.h"
 #include <assert.h>
 int changes = 0;
-
 bool contains(const std::unordered_map<std::string, Result>& map, std::string key) {
     for(std::pair<std::string, Result> pair : map) {
 	if(pair.first == key) return true;
@@ -116,15 +115,14 @@ const Result& DataBase::sql_query(const char* query, ...)
 	    std::cout << "db query = " << buf << "\n";
 	    std::cout << "========\n";
 	    sql_exec(buf, callback_result, &r);
-	    cache[query] = r;
+	    cache[buf] = r;
     }
-    return cache[query];
+    return cache[buf];
 }
 
 int DataBase::callback_result(void* data, int argc, char** argv, char** azColName)
 {
     Result* r = (Result*)data;
-    r->print("during query: \n");
     r->num_cols = argc;
     r->num_rows++;
     for (size_t i = 0; i < argc; ++i) {
