@@ -7,6 +7,17 @@ bool contains(const std::unordered_map<std::string, Result>& map, std::string ke
     }
     return false;
 }
+const char* read_word(const char* words, int word) {
+    int cursor = 0;
+    int word_found = 0;
+    while(word_found < word) {
+	if(words[cursor] == '\0') {
+	    word_found++;
+	}
+	cursor++;
+    } 
+    return words + cursor;
+}
 
 DataBase::DataBase(const char* file)
 {
@@ -40,7 +51,15 @@ Result::Result() {
 void Result::print(const char* prefix) {
     std::cout << prefix;
     std::cout << "num_rows = " << num_rows << ", num_cols = " << num_cols << "\n";
-    
+    for(int i = 0; i < num_cols; ++i) {
+	std::cout << read_word(col_names.c_str(), i) << "|";
+    }
+    for(int i = 0; i < num_rows; ++i) {
+	for(int j = 0; j < num_cols; ++j) {
+	    std::cout << read_word(entries.c_str(), j * i * num_cols) << "|";
+	}
+	std::cout << "\n";
+    }
 }
 
 uint32_t DataBase::sql_exec(const char* sql, int(*callback)(void*, int, char**, char**), void* data)
