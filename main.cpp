@@ -2,6 +2,7 @@
 #include "raylib-gui-layout/layout.h"
 #include "data_base.h"
 #include "raylib-gui-layout/raylib/src/raylib.h"
+#include <cstring>
 
 float window_width = 900;
 float window_height = 600;
@@ -11,7 +12,7 @@ DataBase db = DataBase("datenbank.db");
 int bg_col_int = 0xff181818;
 Color background_col = *(Color*)&bg_col_int; 
 
-const char* selected_category;
+std::string selected_category = "0";
 
 void resize() {
     window_width = GetScreenWidth();
@@ -26,22 +27,28 @@ void category_tree(const char* root_id = NULL, bool default_open = false) {
     Result children_id_result = db.sql_query("Select c_id from categories where subcatof = %s", root_id);
     bool button_click = false;
     if(Gui::tree_node(root_name, default_open, &button_click)) {
-	if(button_click) {
-	    selected_category = root_id;
-	}
 	for(int i = 0; i < children_id_result.num_rows; ++i) {
 	    category_tree(Gui::read_word(children_id_result.entries.c_str(), i));
 	    Gui::tree_pop();
 	}
+    }
+    if(button_click) {
+	selected_category = root_id;
     }
 }
 
 void table(Rectangle boundary) {
 
     Result col_names_result = db.sql_query("select ger_name from col_names");
-    Result rows = db.sql_query("select name, description, producer, prod_date, age from things where category_id = %s", selected_category); 
-    rows.print("rows = ");
-    Gui::table(boundary, col_names_result.num_rows - 1, rows.num_rows, col_names_result.entries.c_str(), rows.entries.c_str());
+    Result rows;
+    if(selected_category == "0") {
+	rows = db.sql_query("select name, description, producer, prod_date, age from things");	
+    }
+    else {
+	rows = db.sql_query("select name, description, producer, prod_date, age from things where category_id = %s", selected_category.c_str()); 
+    }
+    std::string row_values = rows.entries; 
+    Gui::table(boundary, col_names_result.num_rows - 1, rows.num_rows, col_names_result.entries.c_str(), row_values.c_str());
 }
 
 int main() {
@@ -56,6 +63,10 @@ int main() {
 	}
 	BeginDrawing();
 	ClearBackground(background_col);
+	Rectangle content = {0, 200, 100, 500};
+	Vector2 scroll = {50,50};
+	Rectangle view = {10, 10, 20, 20};
+	//GuiScrollPanel(main_window_layout.get_slot(0), "himynameiswhatmynameiswhomynameiswhuuupchuckachukyslimshady,inthemorning when I rissssseflkjdfklsdakldsfajklsdfkljfsdljksdfjkl", content, &scroll, &view);
 	
 	table(main_window_layout.get_slot(0));
 
