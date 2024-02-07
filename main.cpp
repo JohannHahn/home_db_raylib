@@ -1,7 +1,5 @@
-#include "raylib-gui-layout/gui.h"
-#include "raylib-gui-layout/layout.h"
 #include "data_base.h"
-#include "raylib-gui-layout/raylib/src/raylib.h"
+#include "gui.h"
 
 float window_width = 900;
 float window_height = 600;
