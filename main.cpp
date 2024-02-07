@@ -1,10 +1,7 @@
 #include "data_base.h"
-<<<<<<< HEAD
+//this includes raylib
 #include "gui.h"
-=======
-#include "raylib-gui-layout/raylib/src/raylib.h"
 #include <cstring>
->>>>>>> 4b0e2e4b19d263ff9165b7a1ad36ccb7cd2ef730
 
 float window_width = 900;
 float window_height = 600;
